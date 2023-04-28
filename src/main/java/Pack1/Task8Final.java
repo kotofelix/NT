@@ -1,5 +1,10 @@
 package Pack1;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -18,38 +23,71 @@ public class Task8Final {
         int countBulls = 0;
         int countCows = 0;
         String yourNum;
+        int attempts = 0;
 
         do {
             System.out.println("Введите число из 4-х цифр: ");
             yourNum = scanner.next();
+            attempts++;
         } while (yourNum.length() != 4 || !yourNum.matches("[0-9]+"));
 
-        //   System.out.println(yourNum);
+        while (!randomComp.equals(yourNum)) {
+            countBulls = 0;
+            countCows = 0;
 
-        for (int i = 0; i < 4; i++) {
-            int i1 = getDigit(Integer.parseInt(randomComp), i);
-            int i2 = getDigit(Integer.parseInt(yourNum), i);
+            for (int i = 0; i < 4; i++) {
+                int i1 = getDigit(Integer.parseInt(randomComp), i);
+                int i2 = getDigit(Integer.parseInt(yourNum), i);
 
-            if (i1 == i2) {
-                countBulls++;
+                if (i1 == i2) {
+                    countBulls++;
+                }
             }
+
+            for (int i = 0; i < 4; i++) {
+                int i1 = getDigit(Integer.parseInt(randomComp), i);
+
+                if (yourNum.contains(String.valueOf(i1)) && getDigit(Integer.parseInt(yourNum), i) != i1) {
+                    countCows++;
+                }
+            }
+
+            System.out.println(countBulls == 0 ? "0 быков " :
+                    countBulls == 1 ? "бык" :
+                            countBulls + " быка");
+
+            System.out.println(countCows == 0 ? "0 коров" :
+                    countCows == 1 ? "1 корова" :
+                            countCows + " коровы");
+
+            do {
+                System.out.println("Введите число из 4-х цифр: ");
+                yourNum = scanner.next();
+                attempts++;
+            } while (yourNum.length() != 4 || !yourNum.matches("[0-9]+"));
         }
 
-        for (int i = 0; i < 4; i++) {
-            int i1 = getDigit(Integer.parseInt(randomComp), i);
+        if (randomComp.equals(yourNum)) {
+            System.out.println("Строка угадана с " + attempts + " попытки");
+        }
+        try (PrintWriter writer = new PrintWriter(new FileWriter("results.txt", true))) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+            SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
 
-            if (yourNum.contains(String.valueOf(i1)) && getDigit(Integer.parseInt(yourNum), i) != i1) {
-                countCows++;
+            String date = dateFormat.format(new Date());
+            String time = timeFormat.format(new Date());
+
+            writer.println("Game №" + (attempts + 1) + " " + date + " " + time);
+            writer.println("Загаданная строка: " + randomComp);
+            writer.println("Запрос: " + yourNum);
+            writer.println("Ответ: " + countBulls + " быков, " + countCows + " коровы");
+            if (countBulls == 4) {
+                writer.println("Строка была угадана с " + attempts + " попыток");
             }
+            writer.println("----------------------------------------");
+        } catch (IOException e) {
+            System.out.println("Ошибка записи в файл: " + e.getMessage());
         }
 
-        System.out.println(countBulls == 0 ? "0 быков " :
-                countBulls == 1 ? "бык" :
-                        countBulls + " быка");
-
-        System.out.println(countCows == 0 ? "0 коров" :
-                countCows == 1 ? "1 корова" :
-                        countCows + " коровы");
     }
 }
-

@@ -28,6 +28,7 @@ public class Task8Final {
         String yourNum;
         int attempts = 0;
 
+
         do {
             System.out.println("Введите число из 4-х цифр: ");
             yourNum = scanner.next();
@@ -72,6 +73,7 @@ public class Task8Final {
 
         if (randomComp.equals(yourNum)) {
             System.out.println("Строка угадана с " + attempts + " попытки");
+
         }
         try {
             // проверяем, существует ли файл results.txt
@@ -106,10 +108,14 @@ public class Task8Final {
             writer.println(gameHeader);
             writer.println("Загаданная строка: " + randomComp);
             writer.println("Запрос: " + yourNum);
-            writer.println("Ответ: " + countBulls + " быков, " + countCows + " коровы");
+
             if (countBulls == 4) {
                 writer.println("Строка была угадана с " + attempts + " попыток");
+            } else {
+                writer.println("Ответ: " + countBulls + " быков, " + countCows + " коровы");
+
             }
+
             writer.println("----------------------------------------");
             writer.close();
         } catch (IOException e) {

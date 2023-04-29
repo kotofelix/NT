@@ -1,5 +1,6 @@
 package Pack1;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -7,6 +8,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Task8Final {
     private static int getDigit(int number, int position) {
@@ -70,14 +73,37 @@ public class Task8Final {
         if (randomComp.equals(yourNum)) {
             System.out.println("Строка угадана с " + attempts + " попытки");
         }
-        try (PrintWriter writer = new PrintWriter(new FileWriter("results.txt", true))) {
+        try {
+            // проверяем, существует ли файл results.txt
+            File resultsFile = new File("results.txt");
+            int gameNumber = 1;
+            if (resultsFile.exists()) {
+                try (Scanner scanner2 = new Scanner(resultsFile)) {
+                    // считываем последнее значение номера игры
+                    while (scanner2.hasNextLine()) {
+                        String line = scanner2.nextLine();
+                        if (line.startsWith("Game №")) {
+                            Pattern pattern = Pattern.compile("\\d+");
+                            Matcher matcher = pattern.matcher(line);
+                            if (matcher.find()) {
+                                gameNumber = Integer.parseInt(matcher.group());
+                            }
+                        }
+                    }
+                } catch (IOException e) {
+                    System.out.println("Ошибка чтения файла: " + e.getMessage());
+                }
+                gameNumber++; // увеличиваем номер игры на 1
+            }
+
+            // записываем результаты в файл
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
             SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-
             String date = dateFormat.format(new Date());
             String time = timeFormat.format(new Date());
-
-            writer.println("Game №" + (attempts + 1) + " " + date + " " + time);
+            String gameHeader = "Game №" + gameNumber + " " + date + " " + time;
+            PrintWriter writer = new PrintWriter(new FileWriter("results.txt", true));
+            writer.println(gameHeader);
             writer.println("Загаданная строка: " + randomComp);
             writer.println("Запрос: " + yourNum);
             writer.println("Ответ: " + countBulls + " быков, " + countCows + " коровы");
@@ -85,6 +111,7 @@ public class Task8Final {
                 writer.println("Строка была угадана с " + attempts + " попыток");
             }
             writer.println("----------------------------------------");
+            writer.close();
         } catch (IOException e) {
             System.out.println("Ошибка записи в файл: " + e.getMessage());
         }

@@ -15,10 +15,9 @@ public class Task8f2 {
     }
 
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        Scanner scannerKeyboard = new Scanner(System.in);
         Random random = new Random();
         String randomComp = String.format("%04d", random.nextInt(10000)); //случайное число
-
         System.out.println("Загаданная строка: " + randomComp);
 
         int countBulls = 0;
@@ -26,10 +25,9 @@ public class Task8f2 {
         String yourNum;
         int attempts = 0;
 
-
         do {
             System.out.println("Введите число из 4-х цифр: ");
-            yourNum = scanner.next();
+            yourNum = scannerKeyboard.next();
             attempts++;
         } while (yourNum.length() != 4 || !yourNum.matches("[0-9]+"));
 
@@ -47,7 +45,6 @@ public class Task8f2 {
                     countBulls++;
                 }
             }
-
             for (int i = 0; i < 4; i++) {
                 int i1 = getDigit(Integer.parseInt(randomComp), i);
 
@@ -55,36 +52,31 @@ public class Task8f2 {
                     countCows++;
                 }
             }
-
             System.out.println(countBulls == 0 ? "0 быков " :
-                    countBulls == 1 ? "бык" :
+                    countBulls == 1 ? "1 бык" :
                             countBulls + " быка");
 
             System.out.println(countCows == 0 ? "0 коров" :
                     countCows == 1 ? "1 корова" :
                             countCows + " коровы");
-
             do {
                 System.out.println("Введите число из 4-х цифр: ");
-                yourNum = scanner.next();
+                yourNum = scannerKeyboard.next();
                 attempts++;
             } while (yourNum.length() != 4 || !yourNum.matches("[0-9]+"));
         }
-
-
         if (randomComp.equals(yourNum)) {
             System.out.println("Строка угадана с " + attempts + " попытки");
         }
-
         try {
             // проверяем, существует ли файл results.txt
             File resultsFile = new File("results.txt");
             int gameNumber = 1;
             if (resultsFile.exists()) {
-                try (Scanner scanner2 = new Scanner(resultsFile)) {
+                try (Scanner scannerFile = new Scanner(resultsFile)) {
                     // считываем последнее значение номера игры
-                    while (scanner2.hasNextLine()) {
-                        String line = scanner2.nextLine();
+                    while (scannerFile.hasNextLine()) {
+                        String line = scannerFile.nextLine();
                         if (line.startsWith("Game №")) {
                             Pattern pattern = Pattern.compile("\\d+");
                             Matcher matcher = pattern.matcher(line);
@@ -98,7 +90,6 @@ public class Task8f2 {
                 }
                 gameNumber++; // увеличиваем номер игры на 1
             }
-
             // записываем результаты в файл
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
             SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
@@ -126,19 +117,18 @@ public class Task8f2 {
                         cows++;
                     }
                 }
-
-                writer.println("Запрос " + (i + 1) + ": " + input + " (быки: " + bulls + ", коровы: " + cows + ")");
+                writer.println("Запрос" + ": " + input + " Ответ: быки: " + bulls + ", коровы: " + cows);
             }
-
-            writer.println("Запрос: " + yourNum + " (быки: " + countBulls + ", коровы: " + countCows + ")");
+            writer.println("Запрос: " + yourNum + " Ответ: быки: " + (countBulls == 0 ? "0 быков " :
+                    countBulls == 1 ? "бык" :
+                            countBulls + " быка") + ", коровы: " + countCows);
             writer.println("Строка угадана с " + attempts + " попытки");
             writer.println("----------------------------------------");
             writer.close();
         } catch (IOException e) {
             System.out.println("Ошибка записи файла: " + e.getMessage());
         }
-
         System.out.println("Попытки: " + userInputs);
-        }
     }
+}
 

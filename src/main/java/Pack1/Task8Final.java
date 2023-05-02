@@ -5,9 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,10 +15,9 @@ public class Task8Final {
     }
 
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        Scanner scannerKeyboard = new Scanner(System.in);
         Random random = new Random();
         String randomComp = String.format("%04d", random.nextInt(10000)); //случайное число
-
         System.out.println("Загаданная строка: " + randomComp);
 
         int countBulls = 0;
@@ -28,16 +25,17 @@ public class Task8Final {
         String yourNum;
         int attempts = 0;
 
-
         do {
             System.out.println("Введите число из 4-х цифр: ");
-            yourNum = scanner.next();
+            yourNum = scannerKeyboard.next();
             attempts++;
         } while (yourNum.length() != 4 || !yourNum.matches("[0-9]+"));
 
+        List<String> userInputs = new ArrayList<>();
         while (!randomComp.equals(yourNum)) {
             countBulls = 0;
             countCows = 0;
+            userInputs.add(yourNum);
 
             for (int i = 0; i < 4; i++) {
                 int i1 = getDigit(Integer.parseInt(randomComp), i);
@@ -47,7 +45,6 @@ public class Task8Final {
                     countBulls++;
                 }
             }
-
             for (int i = 0; i < 4; i++) {
                 int i1 = getDigit(Integer.parseInt(randomComp), i);
 
@@ -55,7 +52,6 @@ public class Task8Final {
                     countCows++;
                 }
             }
-
             System.out.println(countBulls == 0 ? "0 быков " :
                     countBulls == 1 ? "бык" :
                             countBulls + " быка");
@@ -63,27 +59,24 @@ public class Task8Final {
             System.out.println(countCows == 0 ? "0 коров" :
                     countCows == 1 ? "1 корова" :
                             countCows + " коровы");
-
             do {
                 System.out.println("Введите число из 4-х цифр: ");
-                yourNum = scanner.next();
+                yourNum = scannerKeyboard.next();
                 attempts++;
             } while (yourNum.length() != 4 || !yourNum.matches("[0-9]+"));
         }
-
         if (randomComp.equals(yourNum)) {
             System.out.println("Строка угадана с " + attempts + " попытки");
-
         }
         try {
             // проверяем, существует ли файл results.txt
             File resultsFile = new File("results.txt");
             int gameNumber = 1;
             if (resultsFile.exists()) {
-                try (Scanner scanner2 = new Scanner(resultsFile)) {
+                try (Scanner scannerFile = new Scanner(resultsFile)) {
                     // считываем последнее значение номера игры
-                    while (scanner2.hasNextLine()) {
-                        String line = scanner2.nextLine();
+                    while (scannerFile.hasNextLine()) {
+                        String line = scannerFile.nextLine();
                         if (line.startsWith("Game №")) {
                             Pattern pattern = Pattern.compile("\\d+");
                             Matcher matcher = pattern.matcher(line);
@@ -97,7 +90,6 @@ public class Task8Final {
                 }
                 gameNumber++; // увеличиваем номер игры на 1
             }
-
             // записываем результаты в файл
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
             SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
@@ -107,20 +99,34 @@ public class Task8Final {
             PrintWriter writer = new PrintWriter(new FileWriter("results.txt", true));
             writer.println(gameHeader);
             writer.println("Загаданная строка: " + randomComp);
-            writer.println("Запрос: " + yourNum);
+            for (int i = 0; i < userInputs.size(); i++) {
+                String input = userInputs.get(i);
+                int bulls = 0;
+                int cows = 0;
+                for (int j = 0; j < 4; j++) {
+                    int j1 = getDigit(Integer.parseInt(randomComp), j);
+                    int j2 = getDigit(Integer.parseInt(input), j);
+                    if (j1 == j2) {
+                        bulls++;
+                    }
+                }
+                for (int j = 0; j < 4; j++) {
+                    int j1 = getDigit(Integer.parseInt(randomComp), j);
 
-            if (countBulls == 4) {
-                writer.println("Строка была угадана с " + attempts + " попыток");
-            } else {
-                writer.println("Ответ: " + countBulls + " быков, " + countCows + " коровы");
-
+                    if (input.contains(String.valueOf(j1)) && getDigit(Integer.parseInt(input), j) != j1) {
+                        cows++;
+                    }
+                }
+                writer.println("Запрос" + ": " + input + " Ответ: быки: " + bulls + ", коровы: " + cows);
             }
-
+            writer.println("Запрос: " + yourNum + " Ответ: быки: " + countBulls + ", коровы: " + countCows);
+            writer.println("Строка угадана с " + attempts + " попытки");
             writer.println("----------------------------------------");
             writer.close();
         } catch (IOException e) {
-            System.out.println("Ошибка записи в файл: " + e.getMessage());
+            System.out.println("Ошибка записи файла: " + e.getMessage());
         }
-
+        System.out.println("Попытки: " + userInputs);
     }
 }
+

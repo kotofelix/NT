@@ -9,7 +9,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Task8f {
+public class Task8fBackup {
     private static int getDigit(int number, int position) {
         return (number / (int) Math.pow(10, position)) % 10;
     }

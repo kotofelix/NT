@@ -119,9 +119,7 @@ public class Task8f2 {
                 }
                 writer.println("Запрос" + ": " + input + " Ответ: быки: " + bulls + ", коровы: " + cows);
             }
-            writer.println("Запрос: " + yourNum + " Ответ: быки: " + (countBulls == 0 ? "0 быков " :
-                    countBulls == 1 ? "бык" :
-                            countBulls + " быка") + ", коровы: " + countCows);
+            writer.println("Запрос: " + yourNum + " Ответ: быки: " + countBulls + ", коровы: " + countCows);
             writer.println("Строка угадана с " + attempts + " попытки");
             writer.println("----------------------------------------");
             writer.close();

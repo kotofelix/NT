@@ -17,7 +17,7 @@ public class Task8Final {
     public static void main(String[] args) {
         Scanner scannerKeyboard = new Scanner(System.in);
         Random random = new Random();
-        String randomComp = String.format("%04d", random.nextInt(10000)); //случайное число
+        String randomComp = String.format("%04d", random.nextInt(10000));
         System.out.println("Загаданная строка: " + randomComp);
 
         int countBulls = 0;
@@ -69,12 +69,10 @@ public class Task8Final {
             System.out.println("Строка угадана с " + attempts + " попытки");
         }
         try {
-            // проверяем, существует ли файл results.txt
             File resultsFile = new File("results.txt");
             int gameNumber = 1;
             if (resultsFile.exists()) {
                 try (Scanner scannerFile = new Scanner(resultsFile)) {
-                    // считываем последнее значение номера игры
                     while (scannerFile.hasNextLine()) {
                         String line = scannerFile.nextLine();
                         if (line.startsWith("Game №")) {
@@ -88,9 +86,8 @@ public class Task8Final {
                 } catch (IOException e) {
                     System.out.println("Ошибка чтения файла: " + e.getMessage());
                 }
-                gameNumber++; // увеличиваем номер игры на 1
+                gameNumber++;
             }
-            // записываем результаты в файл
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
             SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
             String date = dateFormat.format(new Date());
@@ -137,4 +134,3 @@ public class Task8Final {
         System.out.println("Попытки: " + userInputs);
     }
 }
-
